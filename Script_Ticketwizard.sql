@@ -33,7 +33,7 @@ CREATE TABLE Eventos (
 
 CREATE TABLE Boletos (
     id_boleto INT AUTO_INCREMENT PRIMARY KEY,
-    num_serie CHAR(8) UNIQUE NOT NULL,
+    num_serie CHAR(8) UNIQUE,
     fila VARCHAR(10),
     asiento VARCHAR(10),
     precio DECIMAL(10, 2) NOT NULL,
@@ -64,6 +64,41 @@ BEGIN
     UPDATE Usuarios
     SET saldo = saldo + NEW.monto
     WHERE id_usuario = NEW.id_usuario;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE ComprarBoleto (
+    IN p_id_boleto INT,
+    IN p_num_serie CHAR(8),
+    IN p_precio DECIMAL(10, 2),
+    IN p_estado_adquisicion ENUM('reventa', 'directo'),
+    IN p_id_usuario INT
+)
+BEGIN
+    DECLARE v_num_transaccion VARCHAR(50);
+    
+    -- Construir el número de transacción usando id_boleto, id_usuario y la fecha actual (solo año, mes y día)
+    SET v_num_transaccion = CONCAT(
+        p_id_boleto, 
+        '-', 
+        p_id_usuario, 
+        '-', 
+        DATE_FORMAT(NOW(), '%Y%m%d')
+    );
+
+    -- Actualizar el boleto existente
+    UPDATE Boletos
+    SET num_serie = p_num_serie,
+        estado_adquisicion = p_estado_adquisicion,
+        id_usuario = p_id_usuario
+    WHERE id_boleto = p_id_boleto;
+
+    -- Insertar la transacción en la tabla Transacciones
+    INSERT INTO Transacciones (num_transaccion, monto, id_usuario, id_boleto)
+    VALUES (v_num_transaccion, p_precio, p_id_usuario, p_id_boleto);
 END //
 
 DELIMITER ;
