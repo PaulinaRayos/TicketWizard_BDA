@@ -11,7 +11,7 @@ CREATE TABLE Usuario (
     edad INT,
     fecha_nacimiento DATE,
     saldo DECIMAL(10, 2) DEFAULT 0.00
-);
+)AUTO_INCREMENT = 1;
 
 
 CREATE TABLE Domicilio (
@@ -21,14 +21,16 @@ CREATE TABLE Domicilio (
     colonia VARCHAR(100),
     id_usuario INT,
     FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario)
-);
+)AUTO_INCREMENT = 1;
 
 CREATE TABLE Evento (
     id_evento INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(255) NOT NULL,
     fecha DATE NOT NULL,
-    localidad VARCHAR(255) NOT NULL
-);
+    localidad VARCHAR(255) NOT NULL,
+    capacidad INT NOT NULL,
+    venue VARCHAR(255) NOT NULL
+)AUTO_INCREMENT = 1;
 
 CREATE TABLE Boleto (
     id_boleto INT AUTO_INCREMENT PRIMARY KEY,
@@ -41,7 +43,7 @@ CREATE TABLE Boleto (
     id_evento INT, 
     FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario),
     FOREIGN KEY (id_evento) REFERENCES Evento(id_evento)
-);
+)AUTO_INCREMENT = 1;
 
 CREATE TABLE Transaccion (
     id_transaccion INT AUTO_INCREMENT PRIMARY KEY,
@@ -52,5 +54,5 @@ CREATE TABLE Transaccion (
     id_boleto INT, 
     FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario),
     FOREIGN KEY (id_boleto) REFERENCES Boleto(id_boleto)
-);
+)AUTO_INCREMENT = 1;
 
